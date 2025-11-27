@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API测试页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+        .result { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px; }
+        .success { color: #27ae60; }
+        .error { color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API连接测试</h1>
+        <button onclick="testFetch()">测试Fetch API</button>
+        <button onclick="testProxy()">测试代理API</button>
+        <div id="result" class="result">
+            等待测试结果...
+        </div>
+    </div>
+
+    <script>
+        async function testFetch() {
+            console.log('测试直接Fetch到API...');
+            try {
+                const response = await fetch('http://localhost:3000/api/chat-messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer app-ntJ0qX9eMENmHw8MVLaEue0L'
+                    },
+                    body: JSON.stringify({
+                        inputs: {},
+                        query: 'test message',
+                        response_mode: 'blocking',
+                        conversation_id: '',
+                        user: 'test_user'
+                    })
+                });
+
+                const result = await response.json();
+                console.log('直接Fetch结果:', result);
+
+                document.getElementById('result').className = 'result ' + (response.ok ? 'success' : 'error');
+                document.getElementById('result').innerHTML =
+                    '<h3>直接Fetch测试</h3>' +
+                    '<p>状态: ' + response.status + '</p>' +
+                    '<p>响应: ' + JSON.stringify(result, null, 2) + '</p>';
+            } catch (error) {
+                console.error('直接Fetch错误:', error);
+                document.getElementById('result').className = 'result error';
+                document.getElementById('result').innerHTML = '<h3>直接Fetch测试</h3><p class="error">错误: ' + error.message + '</p>';
+            }
+        }
+
+        async function testProxy() {
+            console.log('测试通过代理的API...');
+            try {
+                const response = await fetch('http://localhost:3000/api/test', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                console.log('代理测试结果:', result);
+
+                document.getElementById('result').className = 'result ' + (response.ok ? 'success' : 'error');
+                document.getElementById('result').innerHTML =
+                    '<h3>代理API测试</h3>' +
+                    '<p>状态: ' + response.status + '</p>' +
+                    '<p>响应: ' + JSON.stringify(result, null, 2) + '</p>';
+            } catch (error) {
+                console.error('代理测试错误:', error);
+                document.getElementById('result').className = 'result error';
+                document.getElementById('result').innerHTML = '<h3>代理API测试</h3><p class="error">错误: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

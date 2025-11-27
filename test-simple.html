@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>连接测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>网络连接测试</h1>
+        <button onclick="testDirectFetch()">直接测试Fetch</button>
+        <button onclick="testProxyFetch()">测试代理Fetch</button>
+        <div id="status">等待测试...</div>
+    </div>
+
+    <script>
+        async function testDirectFetch() {
+            document.getElementById('status').textContent = '正在测试直接Fetch...';
+            try {
+                const response = await fetch('/api/test', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    document.getElementById('status').textContent = '直接Fetch成功 ✅';
+                    document.getElementById('status').className = 'status success';
+                } else {
+                    document.getElementById('status').textContent = '直接Fetch失败 ❌';
+                    document.getElementById('status').className = 'status error';
+                }
+            } catch (error) {
+                document.getElementById('status').textContent = '直接Fetch错误: ' + error.message;
+                document.getElementById('status').className = 'status error';
+            }
+        }
+
+        async function testProxyFetch() {
+            document.getElementById('status').textContent = '正在测试代理Fetch...';
+            try {
+                const response = await fetch('http://localhost:3000/api/test', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    document.getElementById('status').textContent = '代理Fetch成功 ✅';
+                    document.getElementById('status').className = 'status success';
+                } else {
+                    document.getElementById('status').textContent = '代理Fetch失败 ❌';
+                    document.getElementById('status').className = 'status error';
+                }
+            } catch (error) {
+                document.getElementById('status').textContent = '代理Fetch错误: ' + error.message;
+                document.getElementById('status').className = 'status error';
+            }
+        }
+    </script>
+</body>
+</html>

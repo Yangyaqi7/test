@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心理咨询模拟系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>心理咨询模拟系统</h1>
+            <div class="status" id="status">准备就绪</div>
+        </header>
+
+        <div class="main-content">
+            <!-- 对话区域 -->
+            <div class="conversation-panel">
+                <h2>对话</h2>
+                <div class="chat-container" id="chatContainer">
+                    <div class="welcome-message">
+                        欢迎使用心理咨询模拟系统。点击"开始新的对话"来开始练习。
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <textarea id="userInput" placeholder="请输入你的回复..." rows="3" disabled></textarea>
+                    <div class="button-group">
+                        <button id="startBtn" onclick="startNewConversation()">开始新的对话</button>
+                        <button id="sendBtn" onclick="sendMessage()" disabled>发送</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 督导评价区域 -->
+            <div class="supervision-panel">
+                <h2>督导评价</h2>
+                <div class="evaluation-container" id="evaluationContainer">
+                    <div class="no-evaluation">
+                        暂无评价信息。开始对话后，督导会对你的回复进行评价。
+                    </div>
+                </div>
+
+                <!-- 心理状态分析面板 -->
+                <div class="psychometrics-panel">
+                    <h2>🧠 心理状态分析</h2>
+                    <div class="metrics-grid">
+                        <!-- 情绪曲线 -->
+                        <div class="metric-card emotion-curve">
+                            <div class="metrics-header">
+                                <h3>📈 情绪曲线</h3>
+                                <div class="current-status" id="emotionStatus">暂无数据</div>
+                            </div>
+                            <div class="chart-placeholder" id="emotionChart">等待对话数据...</div>
+                        </div>
+
+                        <!-- 压力曲线 -->
+                        <div class="metric-card stress-curve">
+                            <div class="metrics-header">
+                                <h3>😰 压力曲线</h3>
+                                <div class="current-status" id="stressStatus">暂无数据</div>
+                            </div>
+                            <div class="chart-placeholder" id="stressChart">等待对话数据...</div>
+                        </div>
+
+                        <!-- 对话阶段 -->
+                        <div class="metric-card conversation-stage">
+                            <div class="metrics-header">
+                                <h3>🤝 对话阶段</h3>
+                                <div class="current-status" id="conversationStageStatus">初期接触</div>
+                            </div>
+                            <div class="stage-progress" id="stageProgress"></div>
+                        </div>
+
+                        <!-- 综合指标 -->
+                        <div class="metric-card comprehensive-metrics">
+                            <div class="metrics-header">
+                                <h3>📊 综合指标</h3>
+                            </div>
+                            <div class="metrics-grid">
+                                <div class="metric-item">
+                                    <div class="metric-label">参与度</div>
+                                    <div class="metric-value" id="engagementLevel">5/10</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-label">改变动机</div>
+                                    <div class="metric-value" id="changeMotivation">5/10</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-label">防御机制</div>
+                                    <div class="metric-value" id="defenseMechanism">0/10</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-label">核心冲突</div>
+                                    <div class="metric-value" id="coreConflictIndex">low</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 防御机制 -->
+                        <div class="metric-card defense-mechanism">
+                            <div class="metrics-header">
+                                <h3>🛡️ 防御机制</h3>
+                                <div class="current-status" id="defenseStatus">低防御 (0/10)</div>
+                            </div>
+                            <div class="gauge-container">
+                                <div class="gauge-circle" id="defenseGauge"></div>
+                                <div class="gauge-value" id="defenseGaugeValue">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="evaluation-history" id="evaluationHistory">
+                    <div class="history-header">
+                        <h3>历史评价</h3>
+                        <div class="history-controls">
+                            <button onclick="toggleEvaluationHistory()" class="toggle-btn">
+                                <span id="historyToggleText">收起</span>
+                            </button>
+                            <button onclick="showAllHistory()" class="view-all-btn">查看完整历史</button>
+                        </div>
+                    </div>
+                    <div id="historyList" class="history-list">
+                        <!-- 历史评价将在这里显示 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 对话历史按钮 -->
+            <div class="conversation-history-btn">
+                <button onclick="showConversationHistory()" class="history-btn">
+                    📋 查看对话历史
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史记录弹窗 -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">完整历史记录</h2>
+                <span class="close" onclick="closeHistoryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="history-tabs">
+                    <button class="tab-btn active" onclick="switchHistoryTab('conversation')">对话历史</button>
+                    <button class="tab-btn" onclick="switchHistoryTab('evaluation')">督导评价历史</button>
+                </div>
+                <div id="historyContent" class="history-content">
+                    <!-- 动态内容 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
